@@ -1,0 +1,73 @@
+// Prisma schema — Website Kelas Cyber Security
+// Provider: PostgreSQL (kompatibel dengan Vercel Postgres / Neon)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // hash bcrypt, jangan pernah simpan plain text
+  createdAt DateTime @default(now())
+}
+
+model Anggota {
+  id        String   @id @default(cuid())
+  nama      String
+  email     String?  @unique
+  jabatan   String   // contoh: "Ketua Kelas", "Wakil Ketua", "Sekretaris", "Anggota"
+  fotoUrl   String?  // URL foto dari Cloudinary
+  bio       String?
+  portofolio String?
+  urutan    Int      @default(0) // untuk mengatur urutan tampil
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jadwalPiket JadwalPiket[]
+}
+
+model GaleriItem {
+  id         String   @id @default(cuid())
+  judul      String
+  deskripsi  String?
+  gambarUrl  String   // URL dari Cloudinary
+  cloudinaryId String? // public_id Cloudinary, untuk keperluan hapus gambar
+  createdAt  DateTime @default(now())
+}
+
+enum HariPiket {
+  SENIN
+  SELASA
+  RABU
+  KAMIS
+  JUMAT
+  SABTU
+}
+
+model JadwalPiket {
+  id        String    @id @default(cuid())
+  hari      HariPiket
+  anggotaId String
+  anggota   Anggota   @relation(fields: [anggotaId], references: [id], onDelete: Cascade)
+  catatan   String?
+  createdAt DateTime  @default(now())
+
+  @@index([hari])
+}
+
+model Prestasi {
+  id           String   @id @default(cuid())
+  judul        String
+  deskripsi    String
+  gambarUrl    String
+  cloudinaryId String?
+  urutan       Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

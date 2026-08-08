@@ -1,0 +1,428 @@
+@import "tailwindcss";
+
+/* =====================================================
+   MORPHEUS — Bubbly Bold Design System
+   DNA: Electric Blue + Hot Pink + Cream
+   Terinspirasi langsung dari logo kelas XI TKJ 3
+   ===================================================== */
+:root {
+  /* Base — off-white cream (persis background logo) */
+  --color-base: #F5F2EB;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #EDE9E0;
+
+  /* Teks — biru tua dalam, bukan hitam murni */
+  --color-ink: #1E1B6B;
+  --color-muted: #7269A8;
+
+  /* Aksen utama — Electric Blue (dominan logo ~55%) */
+  --color-accent: #4248D4;
+  --color-accent-2: #3238B8;
+
+  /* Aksen sekunder — Hot Pink (sparkle logo ~15%) */
+  --color-accent-3: #EC4899;
+
+  /* Status hijau tetap */
+  --color-signal: #10B981;
+
+  --color-border: rgba(66, 72, 212, 0.14);
+  --color-border-strong: rgba(66, 72, 212, 0.30);
+}
+
+@theme inline {
+  --color-base: var(--color-base);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-accent: var(--color-accent);
+  --color-accent-2: var(--color-accent-2);
+  --color-accent-3: var(--color-accent-3);
+  --color-signal: var(--color-signal);
+  --color-border: var(--color-border);
+
+  --font-display: var(--font-display);
+  --font-headline: var(--font-headline);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-base);
+  color: var(--color-ink);
+}
+
+/* =====================================================
+   Scrollbar kustom
+   ===================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(66, 72, 212, 0.2);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(66, 72, 212, 0.4);
+}
+
+/* =====================================================
+   MORPHEUS GRID BG — pola dot, lebih playful dari grid kotak
+   ===================================================== */
+.nexus-grid-bg {
+  position: relative;
+  background-color: transparent;
+}
+
+.nexus-grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(66, 72, 212, 0.10) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  z-index: 0;
+}
+
+/* =====================================================
+   BADGE / PILL — bubbly, rounded penuh
+   ===================================================== */
+.nexus-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-accent);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+}
+
+/* =====================================================
+   GLASS CARD — putih semi transparan, border biru lembut
+   ===================================================== */
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1.5px solid var(--color-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1.25rem;
+}
+
+/* =====================================================
+   SOLID CARD — white card dengan fun offset shadow
+   ===================================================== */
+.solid-card {
+  background: #ffffff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 1.25rem;
+  box-shadow: 4px 4px 0px var(--color-border-strong);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.solid-card:hover {
+  box-shadow: 6px 6px 0px var(--color-accent);
+  transform: translateY(-3px) translateX(-1px);
+}
+
+/* =====================================================
+   HERO Decorative Shapes — lebih besar & colorful
+   ===================================================== */
+.nexus-deco-rect {
+  position: absolute;
+  background: rgba(66, 72, 212, 0.08);
+  border-radius: 24px;
+  border: 2px solid rgba(66, 72, 212, 0.12);
+  pointer-events: none;
+  z-index: 1;
+  animation: deco-float 6s ease-in-out infinite;
+}
+
+.nexus-deco-circle {
+  position: absolute;
+  background: rgba(236, 72, 153, 0.10);
+  border-radius: 50%;
+  border: 2px solid rgba(236, 72, 153, 0.15);
+  pointer-events: none;
+  z-index: 1;
+  animation: deco-float 8s ease-in-out infinite reverse;
+}
+
+@keyframes deco-float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  33% {
+    transform: translateY(-12px) rotate(4deg);
+  }
+
+  66% {
+    transform: translateY(6px) rotate(-3deg);
+  }
+}
+
+/* =====================================================
+   SPARKLE — bintang pink ala logo
+   ===================================================== */
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  color: var(--color-accent-3);
+  animation: sparkle-spin 8s linear infinite;
+}
+
+@keyframes sparkle-spin {
+  0% { transform: rotate(0deg) scale(1); opacity: 0.8; }
+  50% { transform: rotate(180deg) scale(1.15); opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 0.8; }
+}
+
+.sparkle-pulse {
+  animation: sparkle-pop 3s ease-in-out infinite;
+}
+
+@keyframes sparkle-pop {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* =====================================================
+   SCROLL INDICATOR
+   ===================================================== */
+.scroll-indicator {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scroll-indicator::after {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 32px;
+  background: linear-gradient(to bottom, var(--color-accent), transparent);
+  border-radius: 999px;
+  animation: scroll-line 2s ease-in-out infinite;
+}
+
+@keyframes scroll-line {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scaleY(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1.2);
+  }
+}
+
+/* =====================================================
+   STAT BLOCK gradients
+   ===================================================== */
+.stat-gradient-dark {
+  background: linear-gradient(to bottom right, var(--color-ink), var(--color-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.stat-gradient-lime {
+  background: linear-gradient(to bottom right, var(--color-accent-3), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* =====================================================
+   PULSE DOT — status aktif
+   ===================================================== */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot,
+  .nexus-deco-rect,
+  .nexus-deco-circle,
+  .sparkle,
+  .sparkle-pulse,
+  .scroll-indicator::after {
+    animation: none;
+  }
+}
+
+/* =====================================================
+   SECTION LABEL — pill kecil berwarna
+   ===================================================== */
+.section-label {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: rgba(66, 72, 212, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+}
+
+/* =====================================================
+   INPUT FIELDS
+   ===================================================== */
+.input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1.5px solid var(--color-border);
+  background: #ffffff;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(66, 72, 212, 0.15);
+}
+
+.input::placeholder {
+  color: var(--color-muted);
+}
+
+/* =====================================================
+   NEXUS HEADLINE — Fredoka, rounded bold
+   ===================================================== */
+.nexus-headline {
+  font-family: var(--font-headline), var(--font-display), sans-serif;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   HERO HEADLINE — Sour Gummy
+   ===================================================== */
+.hero-headline {
+  font-family: var(--font-sour-gummy), sans-serif;
+  font-weight: 900;
+  font-variation-settings: "wdth" 100;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   CYBER GRID BG — alias lama (compat)
+   ===================================================== */
+.cyber-grid-bg {
+  position: relative;
+  background-color: var(--color-base);
+}
+
+.cyber-grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(66, 72, 212, 0.08) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
+  z-index: 0;
+}
+
+/* =====================================================
+   GLOW TEXT — biru
+   ===================================================== */
+.glow-text {
+  text-shadow: 0 0 24px rgba(66, 72, 212, 0.3);
+}
+
+/* =====================================================
+   FADE IN — digunakan FadeInSection
+   ===================================================== */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   BUTTON PRIMARY — bubbly blue
+   ===================================================== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-accent);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 3px 0 var(--color-accent-2);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--color-accent-2);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--color-accent-2);
+}

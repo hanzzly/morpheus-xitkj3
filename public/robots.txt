@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Disallow: /admin
+# Disallow: /api/
+
+# 🤖 Hey, you found this! Good eyes.
+# But this is just the beginning...
+#
+# [ PART 1/3 ] :: MOKLET{y00U_F0Und_
+#
+# Keep digging. Two more pieces are out there.
+# Try pressing F12 next.
