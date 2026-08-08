@@ -136,7 +136,7 @@ export function HeroSection({
       </div>
 
       {/* Scroll indicator — absolute bawah */}
-      <div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2">
+      <div className="absolute bottom-44 left-1/2 z-20 -translate-x-1/2">
         <div className="scroll-indicator">SCROLL DOWN</div>
       </div>
     </section>

@@ -45,7 +45,7 @@ export function ScrollBackground({ children }: { children: React.ReactNode }) {
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
         className={[
-          "absolute top-0 left-1/2 -translate-x-1/2 h-full pointer-events-none",
+          "absolute top-0 left-1/2 -translate-x-1/2 h-[115%] pointer-events-none",
           "opacity-30 mix-blend-multiply",
           "w-[150%] md:w-full",
           "max-w-none"
