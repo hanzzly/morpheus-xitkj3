@@ -14,7 +14,7 @@ export function HeroSection({
   return (
     <section
       id="beranda"
-      className="nexus-grid-bg relative flex min-h-[120vh] flex-col items-center justify-start overflow-hidden px-5 pt-32 text-center"
+      className="nexus-grid-bg relative flex min-h-screen sm:min-h-[120vh] flex-col items-center justify-start overflow-hidden px-5 pt-32 pb-16 text-center"
     >
       {/* Dekorasi geometris — persegi biru */}
       <div
