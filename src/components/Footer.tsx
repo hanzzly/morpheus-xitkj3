@@ -1,6 +1,15 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { EyeIcon } from "lucide-react";
 
-export default function Footer() {
+export default async function Footer() {
+  let visitorCount = 0;
+  try {
+    visitorCount = await prisma.visitor.count();
+  } catch (error) {
+    console.error("Failed to fetch visitor count:", error);
+  }
+
   return (
     <footer id="footer" className="relative bg-accent">
       {/* Strip bubbly ala Morpheus */}
@@ -26,8 +35,14 @@ export default function Footer() {
           </span>
         </div>
 
-        {/* Kanan — tahun */}
+        {/* Kanan — tahun & visitor */}
         <div className="flex items-center gap-3">
+          {/* Visitor Count */}
+          <div className="flex items-center gap-1.5 rounded-full bg-black/20 px-3 py-1.5 font-body text-[10px] font-medium text-white/90">
+            <EyeIcon className="h-3 w-3" />
+            <span>Visitor: {visitorCount.toLocaleString('id-ID')}</span>
+          </div>
+
           <span className="font-mono text-[10px] tracking-wide text-white/50">
             © {new Date().getFullYear()}
           </span>

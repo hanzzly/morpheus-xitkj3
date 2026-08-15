@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { VisitorTracker } from "@/components/VisitorTracker";
 
 export default function PublicLayout({
   children,
@@ -8,6 +9,7 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <VisitorTracker />
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />

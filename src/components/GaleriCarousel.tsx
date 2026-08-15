@@ -129,6 +129,16 @@ export function GaleriCarousel({
       >
         <ChevronRightIcon className="h-5 w-5" />
       </button>
+
+      {/* Mobile hints */}
+      <div className="mt-8 flex flex-col items-center justify-center gap-1 text-center md:hidden">
+        <span className="flex items-center gap-2 text-xs font-medium text-muted">
+          &larr; Swipe &rarr;
+        </span>
+        <span className="text-[10px] text-muted/70">
+          👆 Tap foto untuk keterangan
+        </span>
+      </div>
     </motion.div>
   );
 }

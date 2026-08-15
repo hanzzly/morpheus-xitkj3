@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { AdminVisitorPanel } from "@/components/AdminVisitorPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,11 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Panel Visitor Logs */}
+      <aside className="mt-10">
+        <AdminVisitorPanel />
+      </aside>
     </div>
   );
 }

@@ -71,3 +71,15 @@ model Prestasi {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model Visitor {
+  id        String   @id @default(cuid())
+  ip        String
+  userAgent String
+  device    String   // "Mobile" | "Desktop" | "Tablet"
+  browser   String
+  os        String
+  referrer  String?
+  visitedAt DateTime @default(now())
+  path      String   @default("/")
+}
