@@ -19,16 +19,10 @@ const sourGummy = Sour_Gummy({
 });
 
 /* Body + Display — Nunito, rounded friendly */
-const nunitoDisplay = Nunito({
-  variable: "--font-display",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const nunitoBody = Nunito({
-  variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 });
 
 /* Mono — dipertahankan untuk elemen teknikal CTF, badge, dll */
@@ -54,7 +48,7 @@ export default function RootLayout({
       lang="id"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${fredoka.variable} ${nunitoDisplay.variable} ${nunitoBody.variable} ${jetbrainsMono.variable} ${sourGummy.variable} h-full antialiased`}
+      className={`${fredoka.variable} ${nunito.variable} ${jetbrainsMono.variable} ${sourGummy.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col bg-base text-ink font-body">
         {children}

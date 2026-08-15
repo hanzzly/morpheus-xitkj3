@@ -41,9 +41,9 @@
   --color-signal: var(--color-signal);
   --color-border: var(--color-border);
 
-  --font-display: var(--font-display);
+  --font-display: var(--font-nunito);
   --font-headline: var(--font-headline);
-  --font-body: var(--font-body);
+  --font-body: var(--font-nunito);
   --font-mono: var(--font-mono);
 }
 
