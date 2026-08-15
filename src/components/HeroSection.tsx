@@ -133,10 +133,14 @@ export function HeroSection({
             gradient="stat-gradient-dark"
           />
         </FadeInSection>
+        {/* Scroll indicator (Mobile Only) - di bawah stat block */}
+        <div className="mt-16 sm:hidden">
+          <div className="scroll-indicator">SCROLL DOWN</div>
+        </div>
       </div>
 
-      {/* Scroll indicator — absolute bawah */}
-      <div className="absolute bottom-8 sm:bottom-44 left-1/2 z-20 -translate-x-1/2">
+      {/* Scroll indicator — absolute bawah (Desktop Only) */}
+      <div className="hidden sm:block absolute bottom-44 left-1/2 z-20 -translate-x-1/2">
         <div className="scroll-indicator">SCROLL DOWN</div>
       </div>
     </section>
