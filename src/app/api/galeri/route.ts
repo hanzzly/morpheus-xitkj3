@@ -6,7 +6,7 @@ import { uploadImageToCloudinary } from "@/lib/cloudinary";
 // GET /api/galeri — publik
 export async function GET() {
   const items = await prisma.galeriItem.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ urutan: "asc" }, { createdAt: "desc" }],
   });
   return NextResponse.json(items);
 }
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const judul = formData.get("judul")?.toString();
     const deskripsi = formData.get("deskripsi")?.toString();
+    const urutanStr = formData.get("urutan")?.toString();
     const file = formData.get("gambar") as File | null;
 
     if (!judul) {
@@ -29,6 +30,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Gambar wajib diunggah" }, { status: 400 });
     }
 
+    const urutan = urutanStr ? parseInt(urutanStr, 10) || 0 : 0;
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const uploaded = await uploadImageToCloudinary(buffer, "kelas-cyber/galeri");
 
@@ -36,6 +39,7 @@ export async function POST(request: NextRequest) {
       data: {
         judul,
         deskripsi,
+        urutan,
         gambarUrl: uploaded.url,
         cloudinaryId: uploaded.publicId,
       },

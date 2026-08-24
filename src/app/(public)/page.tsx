@@ -6,13 +6,14 @@ import { JadwalPiketSection } from "@/components/JadwalPiketSection";
 import { PrestasiSection } from "@/components/PrestasiSection";
 import { HeroSection } from "@/components/HeroSection";
 import { ScrollBackground } from "@/components/ScrollBackground";
+import AnonChatSection from "@/components/AnonChatSection";
 
 export const dynamic = "force-dynamic";
 
 async function getData() {
   const [anggota, galeri, jadwal, prestasi] = await Promise.all([
     prisma.anggota.findMany({ orderBy: [{ urutan: "asc" }, { createdAt: "asc" }] }),
-    prisma.galeriItem.findMany({ orderBy: { createdAt: "desc" }, take: 12 }),
+    prisma.galeriItem.findMany({ orderBy: [{ urutan: "asc" }, { createdAt: "desc" }], take: 12 }),
     prisma.jadwalPiket.findMany({ include: { anggota: true }, orderBy: { hari: "asc" } }),
     prisma.prestasi.findMany({ orderBy: [{ urutan: "asc" }, { createdAt: "desc" }] }),
   ]);
@@ -144,6 +145,14 @@ export default async function HomePage() {
           </div>
         </div>
       </FadeInSection>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="h-0.5 rounded-full bg-[rgba(66,72,212,0.1)]" />
+      </div>
+
+      {/* ============ TEXT ANONIM ============ */}
+      <AnonChatSection />
     </ScrollBackground>
   );
 }

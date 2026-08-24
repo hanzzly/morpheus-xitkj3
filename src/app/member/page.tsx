@@ -3,7 +3,9 @@
 import { useEffect, useState, FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getJabatanLabel } from "@/lib/jabatan";
+import { LogOutIcon, ArrowLeftIcon, CheckCircleIcon, UserIcon } from "lucide-react";
 
 interface Anggota {
   id: string;
@@ -16,6 +18,7 @@ interface Anggota {
 }
 
 export default function MemberDashboard() {
+  const router = useRouter();
   const [data, setData] = useState<Anggota | null>(null);
   const [loading, setLoading] = useState(true);
   
@@ -23,28 +26,42 @@ export default function MemberDashboard() {
   const [portofolio, setPortofolio] = useState("");
   const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   async function loadData() {
     setLoading(true);
-    // Kita bisa ambil semua anggota lalu filter berdasar email dari session, 
-    // atau buat endpoint khusus /api/member/me.
-    // Karena kita tidak punya endpoint /me, kita bisa buat endpoint kecil atau fetch /api/anggota 
-    // Wait, let's just make a /api/member/me route to fetch the exact data.
-    const res = await fetch("/api/member/me");
-    if (res.ok) {
-      const myData = await res.json();
-      setData(myData);
-      setBio(myData.bio ?? "");
-      setPortofolio(myData.portofolio ?? "");
+    try {
+      const res = await fetch("/api/member/me");
+      if (res.ok) {
+        const myData = await res.json();
+        setData(myData);
+        setBio(myData.bio ?? "");
+        setPortofolio(myData.portofolio ?? "");
+      }
+    } catch (err) {
+      console.error("Load member data error:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   useEffect(() => {
     void loadData();
   }, []);
+
+  async function handleLogout() {
+    if (!confirm("Apakah kamu yakin ingin keluar dari akun?")) return;
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+    router.push("/");
+    router.refresh();
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -68,6 +85,8 @@ export default function MemberDashboard() {
 
       setSuccess("Profil berhasil diperbarui!");
       setFotoFile(null);
+      const fi = document.getElementById("member-foto-input") as HTMLInputElement | null;
+      if (fi) fi.value = "";
       await loadData();
     } catch {
       setError("Tidak bisa terhubung ke server.");
@@ -105,8 +124,9 @@ export default function MemberDashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-6 text-muted">
-        Memuat data...
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-6 text-muted">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <p className="font-body text-sm">Memuat profil anggota...</p>
       </div>
     );
   }
@@ -114,10 +134,26 @@ export default function MemberDashboard() {
   if (!data) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
-        <p className="text-muted">Data tidak ditemukan.</p>
-        <Link href="/" className="mt-4 rounded-md bg-white/5 px-4 py-2 text-sm hover:bg-white/10">
-          Kembali ke Beranda
-        </Link>
+        <div className="glass-card max-w-sm p-8 text-center">
+          <p className="font-body text-base font-semibold text-ink">Sesi Tidak Ditemukan</p>
+          <p className="mt-2 font-body text-xs text-muted">
+            Kamu belum login atau data anggota tidak terdaftar.
+          </p>
+          <div className="mt-6 flex flex-col gap-2">
+            <a
+              href="/api/auth/google/login"
+              className="btn-primary justify-center text-xs"
+            >
+              <UserIcon className="h-4 w-4" /> Login Google
+            </a>
+            <Link
+              href="/"
+              className="rounded-full border border-border px-4 py-2 font-body text-xs font-semibold text-muted hover:bg-base"
+            >
+              Kembali ke Beranda
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -125,39 +161,64 @@ export default function MemberDashboard() {
   return (
     <div className="min-h-screen bg-base py-12 sm:py-20">
       <div className="mx-auto max-w-xl px-5">
-        <Link
-          href="/"
-          className="mb-8 inline-flex items-center gap-1.5 font-mono text-xs text-muted transition-colors hover:text-accent-2"
-        >
-          ← Kembali ke beranda
-        </Link>
+        {/* Top bar: Back to Home + Logout button */}
+        <div className="mb-6 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3.5 py-1.5 font-body text-xs font-semibold text-muted shadow-sm transition-all hover:bg-[rgba(66,72,212,0.06)] hover:text-accent"
+          >
+            <ArrowLeftIcon className="h-3.5 w-3.5" />
+            Beranda
+          </Link>
 
-        <div className="glass-card overflow-hidden rounded-xl border border-border bg-surface p-6 sm:p-8">
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(236,72,153,0.3)] bg-white px-3.5 py-1.5 font-body text-xs font-semibold text-accent-3 shadow-sm transition-all hover:bg-[rgba(236,72,153,0.08)] disabled:opacity-50"
+          >
+            <LogOutIcon className="h-3.5 w-3.5" />
+            {loggingOut ? "Keluar..." : "Keluar"}
+          </button>
+        </div>
+
+        {/* Profile Card */}
+        <div className="solid-card overflow-hidden p-6 sm:p-8" style={{ boxShadow: "6px 6px 0px rgba(66,72,212,0.2)" }}>
           <div className="flex flex-col items-center text-center">
-            <div className="relative h-24 w-24 overflow-hidden rounded-full bg-base ring-2 ring-border">
+            <div className="relative h-24 w-24 overflow-hidden rounded-full bg-base ring-4 ring-accent/20">
               {data.fotoUrl ? (
                 <Image src={data.fotoUrl} alt={data.nama} fill className="object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center font-display text-2xl font-semibold text-muted">
+                <div className="flex h-full w-full items-center justify-center font-headline text-3xl font-bold text-accent">
                   {data.nama.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
             
-            <h1 className="mt-4 font-display text-2xl font-semibold text-ink">
+            <h1 className="mt-4 font-headline text-2xl font-bold text-ink">
               {data.nama}
             </h1>
-            <span className="mt-2 inline-block rounded-sm bg-accent px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wide uppercase text-ink">
-              {getJabatanLabel(data.jabatan)}
-            </span>
+            
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+              <span className="rounded-full bg-accent/10 px-3 py-1 font-body text-xs font-bold text-accent">
+                {getJabatanLabel(data.jabatan)}
+              </span>
+              {data.email && (
+                <span className="rounded-full bg-base px-3 py-1 font-mono text-[11px] text-muted">
+                  {data.email}
+                </span>
+              )}
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5 border-t border-border/50 pt-8">
-            <h2 className="font-display text-lg font-semibold text-ink">Edit Profil</h2>
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5 border-t border-border pt-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-headline text-base font-bold text-ink">Edit Profil Anggota</h2>
+              <span className="font-mono text-[10px] text-signal font-semibold">● Sesi Aktif</span>
+            </div>
             
             <label className="block">
               <div className="mb-1 flex items-center justify-between">
-                <span className="block text-sm font-medium text-muted">
+                <span className="block font-body text-xs font-semibold text-muted">
                   Foto Profil Baru
                 </span>
                 {data.fotoUrl && (
@@ -165,65 +226,83 @@ export default function MemberDashboard() {
                     type="button"
                     onClick={handleDeletePhoto}
                     disabled={submitting}
-                    className="text-xs font-medium text-red-400 hover:text-red-300 disabled:opacity-50"
+                    className="font-body text-xs font-semibold text-accent-3 hover:underline disabled:opacity-50"
                   >
                     Hapus Foto
                   </button>
                 )}
               </div>
               <input
+                id="member-foto-input"
                 type="file"
                 accept="image/*"
                 onChange={(e) => setFotoFile(e.target.files?.[0] ?? null)}
-                className="block w-full text-sm text-muted file:mr-3 file:rounded-sm file:border-0 file:bg-accent file:px-3 file:py-2 file:text-xs file:font-semibold file:text-ink hover:file:bg-accent/90 cursor-pointer"
+                className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-1.5 file:text-xs file:font-bold file:text-white hover:file:bg-accent-2 cursor-pointer"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-sm font-medium text-muted">
+              <span className="mb-1 block font-body text-xs font-semibold text-muted">
                 Bio Singkat
               </span>
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 rows={3}
-                placeholder="Ceritakan sedikit tentang dirimu..."
+                placeholder="Ceritakan sedikit tentang keahlian atau minatmu..."
                 className="input resize-none"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-sm font-medium text-muted">
-                Portofolio (Tautan/Deskripsi)
+              <span className="mb-1 block font-body text-xs font-semibold text-muted">
+                Portofolio (Tautan / Deskripsi Proyek)
               </span>
               <textarea
                 value={portofolio}
                 onChange={(e) => setPortofolio(e.target.value)}
                 rows={3}
-                placeholder="Tuliskan portofolio atau berikan tautan..."
+                placeholder="https://github.com/username atau proyek yang pernah kamu buat..."
                 className="input resize-none"
               />
             </label>
 
             {error && (
-              <p className="rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
-                {error}
+              <p className="rounded-xl bg-[rgba(236,72,153,0.08)] px-4 py-2.5 font-body text-xs font-semibold text-accent-3">
+                ⚠️ {error}
               </p>
             )}
             {success && (
-              <p className="rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2 text-sm text-green-400">
-                {success}
+              <p className="flex items-center gap-2 rounded-xl bg-[rgba(16,185,129,0.08)] px-4 py-2.5 font-body text-xs font-semibold text-signal">
+                <CheckCircleIcon className="h-4 w-4 shrink-0" /> {success}
               </p>
             )}
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-md bg-accent px-4 py-2.5 text-sm font-bold text-ink transition-colors hover:bg-accent/90 disabled:opacity-60"
+              className="btn-primary w-full justify-center py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {submitting ? "Menyimpan..." : "Simpan Perubahan"}
+              {submitting ? "Menyimpan Perubahan..." : "💾 Simpan Perubahan"}
             </button>
           </form>
+
+          {/* Bottom actions */}
+          <div className="mt-6 flex flex-col items-center gap-3 border-t border-border pt-6 text-center sm:flex-row sm:justify-between">
+            <Link
+              href="/"
+              className="font-body text-xs font-semibold text-muted hover:text-accent"
+            >
+              ← Kembali ke Beranda
+            </Link>
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="font-body text-xs font-semibold text-accent-3 hover:underline disabled:opacity-50"
+            >
+              🚪 Keluar dari Akun
+            </button>
+          </div>
         </div>
       </div>
     </div>

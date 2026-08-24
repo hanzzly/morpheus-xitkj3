@@ -10,6 +10,7 @@ const ADMIN_LINKS = [
   { href: "/admin/galeri", label: "Galeri", emoji: "🖼️" },
   { href: "/admin/prestasi", label: "Prestasi", emoji: "🏆" },
   { href: "/admin/jadwal-piket", label: "Jadwal Piket", emoji: "📅" },
+  { href: "/admin/chat", label: "Chat Anonim", emoji: "💬" },
 ];
 
 export default function AdminSidebar() {

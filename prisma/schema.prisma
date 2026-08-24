@@ -33,12 +33,13 @@ model Anggota {
 }
 
 model GaleriItem {
-  id         String   @id @default(cuid())
-  judul      String
-  deskripsi  String?
-  gambarUrl  String   // URL dari Cloudinary
-  cloudinaryId String? // public_id Cloudinary, untuk keperluan hapus gambar
-  createdAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  judul        String
+  deskripsi    String?
+  gambarUrl    String   // URL dari Cloudinary
+  cloudinaryId String?  // public_id Cloudinary, untuk keperluan hapus gambar
+  urutan       Int      @default(0) // untuk mengatur urutan tampil
+  createdAt    DateTime @default(now())
 }
 
 enum HariPiket {
@@ -82,4 +83,26 @@ model Visitor {
   referrer  String?
   visitedAt DateTime @default(now())
   path      String   @default("/")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  content   String   @db.VarChar(280) // max 280 karakter
+  anonName  String   // contoh: "Anonim#4291"
+  ip        String   @default("unknown") // IP asli untuk moderasi admin
+  ipHash    String   // SHA-256 hash dari IP, untuk rate limiting
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([ipHash])
+  @@index([ip])
+}
+
+model BlockedIp {
+  id        String   @id @default(cuid())
+  ip        String   @unique
+  alasan    String?  // alasan pemblokiran (misal: "Spam", "Kata tidak pantas")
+  createdAt DateTime @default(now())
+
+  @@index([ip])
 }
